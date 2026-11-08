@@ -31,7 +31,9 @@ const TAGS = [
   "preço Atom+", "planos Atom+", "regulamento Atom+", "contratar Atom+",
   "Atom education", "Atom Plus education", "online courses Atom", "Atom benefits card",
   "Atom ambassador", "Atom referral", "Atom education Brazil", "online learning Brazil",
-  "cursos online", "cartão de benefícios", "plataforma de aprendizagem"
+  "cursos online", "cartão de benefícios", "plataforma de aprendizagem",
+  "como ser embaixador Atom", "programa de indicação educacional",
+  "benefícios para estudantes", "plataforma de educação online"
 ];
 
 const CATALOG = [{
