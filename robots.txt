@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://atom-embaixador-brasil.netlify.app/sitemap.xml
