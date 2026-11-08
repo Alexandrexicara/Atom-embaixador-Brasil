@@ -25,3 +25,20 @@ Fontes:
 - https://gb.atomeducacional.com.br/
 - https://atomeducacional.com.br/regulamento-atom/
 - https://atomeducacional.com.br/atom-como-funciona-o-cartao-de-beneficios-da-atom/
+
+## MCP e descoberta pelo ChatGPT
+
+O projeto disponibiliza um servidor MCP público em:
+
+- Endpoint MCP: https://atom-embaixador-brasil.netlify.app/mcp
+- Ferramenta `atomplus_status`: apresenta o serviço e os canais oficiais.
+- Ferramenta `atomplus_search`: pesquisa o catálogo por intenção e palavras-chave.
+- Ferramenta `atomplus_search_tags`: retorna os termos de descoberta configurados.
+
+O catálogo inclui aproximadamente 100 termos em português, inglês e espanhol, relacionados a cursos, Tutor IA, cartão de benefícios, assinatura, planos e programa de embaixadores.
+
+O MCP divulga somente informações públicas. Não contém senha, token privado ou credencial da conta de embaixador. O link individual de indicação deve ser configurado somente quando for obtido no painel oficial e confirmado como link público.
+
+### Publicação
+
+A rota `/mcp` é encaminhada à função serverless do Netlify. Após o deploy, valide a resposta MCP pelo endpoint e conecte-o a um cliente compatível com MCP.
