@@ -2,9 +2,10 @@
   "name": "atom-embaixador-brasil",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Página independente de divulgação do Atom+ com catálogo público MCP.",
   "dependencies": {
-    "@modelcontextprotocol/server": "^2.0.0",
+    "@modelcontextprotocol/sdk": "^1.25.2",
     "zod": "^4.1.12"
   },
   "engines": {
