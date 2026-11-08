@@ -1,8 +1,6 @@
-/* Configure apenas com os dados oficiais fornecidos/autorizados pela Atom. */
-window.ATOM_SITE_CONFIG = {
-  ambassadorName: "Célio Santos",
+// Configure aqui somente o link/código oficial fornecido pela Atom Educação.
+window.ATOM_CONFIG = {
   referralUrl: "",
   ambassadorCode: "",
-  whatsappNumber: "",
-  whatsappMessage: "Olá! Quero saber mais sobre o Atom+ e as condições da assinatura."
+  whatsappNumber: "5538988283318"
 };
