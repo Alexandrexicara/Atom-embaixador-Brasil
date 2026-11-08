@@ -1,0 +1,22 @@
+# Atom+ — apresentação independente
+
+> Página independente com informações públicas sobre o Atom+, produto da Atom Educação. Não é o site oficial da empresa.
+
+## Página
+- https://atom-embaixador-brasil.netlify.app/
+
+## Servidor MCP
+- Endpoint Streamable HTTP: https://atom-embaixador-brasil.netlify.app/mcp
+- Ferramenta atomplus_status: apresenta o serviço, recursos e canais oficiais.
+- Ferramenta atomplus_search: pesquisa o catálogo por intenção e palavras-chave.
+- Ferramenta atomplus_search_tags: lista os 100 termos de descoberta.
+
+## Assuntos
+Atom+, Atom Educação, cartão de benefícios, cursos online, cursos técnicos, cursos profissionalizantes, Tutor IA, inteligência artificial para estudar, educação digital, assinatura educacional, plano família, Atom Social, Atom Dupla, Atom Família, embaixador Atom, indicação Atom, benefícios e descontos, certificação profissional, preparação ENEM e cursos para concursos.
+
+## Canais oficiais
+- Site: https://gb.atomeducacional.com.br/
+- Regulamento: https://atomeducacional.com.br/regulamento-atom/
+
+## Aviso
+Preços, benefícios, elegibilidade, certificação e disponibilidade podem mudar. Confirme sempre nos canais e documentos oficiais. A página não promete comissão, vínculo oficial ou resultados financeiros. Não há credenciais privadas expostas.
