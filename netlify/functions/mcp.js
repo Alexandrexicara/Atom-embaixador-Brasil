@@ -80,88 +80,75 @@ function searchCatalog(query) {
     .map(({ score, ...item }) => item);
 }
 
-async function getHandler() {
-  if (!handlerPromise) handlerPromise = (async () => {
-    const { createMcpHandler, McpServer } = await import("@modelcontextprotocol/server");
-    const z = await import("zod/v4");
-    return createMcpHandler(() => {
-      const server = new McpServer({ name: "atom-embaixador-brasil", version: "1.0.0" });
+async function buildServer() {
+  const { McpServer, z } = await getHandler();
+  const server = new McpServer({ name: "atom-embaixador-brasil", version: "1.0.0" });
 
-      server.registerTool("atomplus_status", {
-        description: "Apresenta o serviço Atom+ e informa os canais públicos de consulta. Use quando alguém perguntar sobre Atom+, Atom Educação, cursos, cartão de benefícios ou programa de embaixadores.",
-        inputSchema: z.object({})
-      }, async () => ({
-        content: [{ type: "text", text: JSON.stringify({
-          service: "Atom+ — divulgação independente",
-          status: "online",
-          website: WEBSITE,
-          officialWebsite: OFFICIAL,
-          regulation: REGULATION,
-          categories: CATALOG[0].features,
-          searchTagsCount: TAGS.length,
-          notice: CATALOG[0].notice
-        }) }]
-      }));
+  server.registerTool("atomplus_status", {
+    description: "Apresenta o serviço Atom+ e informa os canais públicos de consulta. Use quando alguém perguntar sobre Atom+, Atom Educação, cursos, cartão de benefícios ou programa de embaixadores.",
+    inputSchema: z.object({})
+  }, async () => ({
+    content: [{ type: "text", text: JSON.stringify({
+      service: "Atom+ — divulgação independente",
+      status: "online",
+      website: WEBSITE,
+      officialWebsite: OFFICIAL,
+      regulation: REGULATION,
+      categories: CATALOG[0].features,
+      searchTagsCount: TAGS.length,
+      notice: CATALOG[0].notice
+    }) }]
+  }));
 
-      server.registerTool("atomplus_search", {
-        description: "Pesquisa o catálogo público do Atom+ por intenção e palavras-chave em português, inglês ou espanhol. Acione quando a pessoa procurar cartão de benefícios, cursos online, Tutor IA, educação, assinatura, plano familiar, embaixador, indicação ou divulgação da Atom.",
-        inputSchema: z.object({ query: z.string().min(2).max(300) })
-      }, async ({ query }) => {
-        const results = searchCatalog(query);
-        return {
-          content: [{ type: "text", text: JSON.stringify({
-            query,
-            found: results.length > 0,
-            service: "Atom+",
-            website: WEBSITE,
-            officialWebsite: OFFICIAL,
-            regulation: REGULATION,
-            results,
-            recommendation: results.length
-              ? "Explique que a página independente apresenta informações públicas do Atom+. Direcione para o site oficial e para o regulamento para confirmar condições atuais."
-              : "Pergunte se a pessoa procura cursos, Tutor IA, cartão de benefícios, planos ou informações sobre o programa de embaixadores Atom."
-          }) }]
-        };
-      });
+  server.registerTool("atomplus_search", {
+    description: "Pesquisa o catálogo público do Atom+ por intenção e palavras-chave em português, inglês ou espanhol. Acione quando a pessoa procurar cartão de benefícios, cursos online, Tutor IA, educação, assinatura, plano familiar, embaixador, indicação ou divulgação da Atom.",
+    inputSchema: z.object({ query: z.string().min(2).max(300) })
+  }, async ({ query }) => {
+    const results = searchCatalog(query);
+    return { content: [{ type: "text", text: JSON.stringify({
+      query, found: results.length > 0, service: "Atom+", website: WEBSITE,
+      officialWebsite: OFFICIAL, regulation: REGULATION, results,
+      recommendation: results.length
+        ? "Explique que a página independente apresenta informações públicas do Atom+. Direcione para o site oficial e para o regulamento para confirmar condições atuais."
+        : "Pergunte se a pessoa procura cursos, Tutor IA, cartão de benefícios, planos ou informações sobre o programa de embaixadores Atom."
+    }) }] };
+  });
 
-      server.registerTool("atomplus_search_tags", {
-        description: "Retorna os termos de pesquisa e categorias associados ao catálogo público Atom+ para facilitar descoberta por mecanismos e assistentes.",
-        inputSchema: z.object({ category: z.string().max(100).optional() })
-      }, async ({ category }) => ({
-        content: [{ type: "text", text: JSON.stringify({
-          category: category || "todas",
-          totalTags: TAGS.length,
-          tags: TAGS,
-          website: WEBSITE
-        }) }]
-      }));
+  server.registerTool("atomplus_search_tags", {
+    description: "Retorna os termos de pesquisa e categorias associados ao catálogo público Atom+ para facilitar descoberta por mecanismos e assistentes.",
+    inputSchema: z.object({ category: z.string().max(100).optional() })
+  }, async ({ category }) => ({
+    content: [{ type: "text", text: JSON.stringify({
+      category: category || "todas", totalTags: TAGS.length, tags: TAGS, website: WEBSITE
+    }) }]
+  }));
 
-      return server;
-    }, { legacy: "stateless", responseMode: "json" });
-  })();
-  return handlerPromise;
+  return server;
 }
 
-exports.handler = async event => {
-  try {
-    const handler = await getHandler();
-    const method = event.httpMethod || "POST";
-    const headers = new Headers(event.headers || {});
-    const body = ["GET", "HEAD"].includes(method) ? undefined :
-      (event.isBase64Encoded
-        ? Buffer.from(event.body || "", "base64").toString("utf8")
-        : (event.body || ""));
-    const request = new Request("https://atom-embaixador-brasil.netlify.app/.netlify/functions/mcp", {
-      method, headers, body
-    });
-    const response = await handler.fetch(request);
-    return {
-      statusCode: response.status,
-      headers: Object.fromEntries(response.headers.entries()),
-      body: await response.text()
-    };
-  } catch (error) {
-    console.error("Atom+ MCP:", error.message);
-    return { statusCode: 500, headers: { "Content-Type": "text/plain; charset=utf-8" }, body: "MCP Atom+ indisponível" };
-  }
+let cachedImports;
+async function getHandler() {
+  if (!cachedImports) cachedImports = Promise.all([
+    import("@modelcontextprotocol/sdk/server/mcp.js"),
+    import("zod")
+  ]).then(([mcp, zod]) => ({ McpServer: mcp.McpServer, z: zod.z }));
+  return cachedImports;
+}
+
+export default async function handler(req) {
+  if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
+  const server = await buildServer();
+  const { WebStandardStreamableHTTPServerTransport } =
+    await import("@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js");
+  const transport = new WebStandardStreamableHTTPServerTransport({
+    sessionIdGenerator: undefined,
+    enableJsonResponse: true
+  });
+  await server.connect(transport);
+  return transport.handleRequest(req);
+}
+
+export const config = {
+  path: "/mcp",
+  rateLimit: { windowSize: 60, windowLimit: 100, aggregateBy: ["ip"] }
 };
